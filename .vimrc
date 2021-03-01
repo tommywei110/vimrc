@@ -37,8 +37,11 @@ call plug#begin('~/.vim/plugged')
 Plug '907th/vim-auto-save'
 " git "
 Plug 'tpope/vim-fugitive'
+" Cheat sheet "
+Plug 'dbeniamine/cheat.sh-vim'
 " status line"
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 " file tree "
 Plug 'scrooloose/nerdtree'
 " undo tree "
@@ -47,8 +50,13 @@ Plug 'valloric/youcompleteme'
 " fuzzy file finder "
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+" Comment "
+Plug 'scrooloose/nerdcommenter'
 " color scheme "
 Plug 'morhetz/gruvbox'
+" writing related plugins"
+Plug 'rhysd/vim-grammarous'
+Plug 'junegunn/goyo.vim'
 call plug#end()
 
 colorscheme gruvbox
@@ -72,11 +80,10 @@ autocmd BufWinEnter * silent NERDTreeMirror
 autocmd VimEnter * NERDTree | wincmd p
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 "YCM"
-"BIG Caviar here"
 let g:ycm_path_to_python_interpreter = '/usr/bin/python3'
 nnoremap <silent> <leader>gt :YcmCompleter GoTo<CR>
-nnoremap <silent> <leader>gd :YcmCompleter GetDoc<CR>
-nnoremap <silent> <leader>gf :YcmCompleter FixIt<CR>
+nnoremap <silent> <leader>gd :YcmCompleter GetDoc<CR> :wincmd k<CR>
+nnoremap <silent> <leader>gr :YcmCompleter GoToReferences<CR>
 "tab control"
 nnoremap <leader>tn :tabnew<Space>
 nnoremap <leader>te :tabedit<Space>
@@ -87,7 +94,10 @@ nnoremap <leader>p "0p<CR>
 nnoremap <leader>P "0P<CR>
 "FZF"
 nnoremap <leader>f :Files<CR>
-
+nnoremap <leader>F :Rg<CR>
+"Comment"
+let g:NERDCreateDefaultMappings = 0
+map <Leader>c <plug>NERDCommenterToggle
 " func to trim trailing whitespace "
 fun! TrimWhitespace()
     let l:save = winsaveview()
@@ -98,3 +108,9 @@ augroup TOMMY
     autocmd!
     autocmd BufWritePre * :call TrimWhitespace()
 augroup END
+
+function! s:goyo_enter()
+    :NERDTreeToggle<CR>
+endfunction
+
+autocmd! User GoyoEnter call <SID>goyo_enter()
